@@ -2,19 +2,24 @@ import Image from "next/image";
 import type { ProjectImage } from "@/lib/content";
 
 /**
- * Renders a real project screenshot when one exists in `public/`.
+ * A single framed project screenshot.
  *
- * There are no screenshots yet, so no project defines `image` and this
- * component is never rendered. To add one later, drop a real image into
- * `public/projects/` and set `image` on that project in `content.ts` — the
- * card picks it up with no other changes. Never used to show a placeholder,
- * an empty frame or a fabricated interface.
+ * This is the low-level frame primitive — a rounded, bordered container around a
+ * responsive `next/image`. It renders a real image only; it is never used to
+ * show a placeholder, an empty frame or a fabricated interface. `<ProjectShowcase>`
+ * composes two of these into the primary + supporting pair shown on a card.
+ *
+ * `sizes` is required so Next generates a responsive `srcset` rather than
+ * assuming the image spans the full viewport. Loading stays lazy (the default),
+ * which is correct here: the projects section sits well below the fold.
  */
 export function ProjectScreenshot({
   image,
+  sizes,
   className = "",
 }: {
   image: ProjectImage;
+  sizes: string;
   className?: string;
 }) {
   return (
@@ -26,7 +31,7 @@ export function ProjectScreenshot({
         alt={image.alt}
         width={image.width}
         height={image.height}
-        sizes="(min-width: 1024px) 480px, 100vw"
+        sizes={sizes}
         className="h-auto w-full"
       />
     </div>

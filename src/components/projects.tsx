@@ -2,7 +2,7 @@ import { Section } from "@/components/section";
 import { ButtonLink } from "@/components/button-link";
 import { Reveal } from "@/components/reveal";
 import { ProjectCard } from "@/components/project-card";
-import { ProjectScreenshot } from "@/components/project-screenshot";
+import { ProjectShowcase } from "@/components/project-showcase";
 import { PROJECTS, type Project } from "@/lib/content";
 
 const featured = PROJECTS.find((project) => project.featured);
@@ -70,6 +70,9 @@ function ProjectButtons({ links }: { links: Project["links"] }) {
  * a blue accent badge so the primary case study reads as the anchor of the
  * section; the second project uses the same full-width layout at a slightly
  * calmer scale so it carries real weight rather than looking like a stub.
+ *
+ * When the project has real screenshots, the text block runs full width and the
+ * two-image composition sits below it so the primary shot can be large.
  */
 function ProjectEntry({
   project,
@@ -83,8 +86,8 @@ function ProjectEntry({
   return (
     <Reveal delay={delay}>
       <ProjectCard featured={featured}>
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
-          <div className="lg:flex-1">
+        <div className="flex flex-col gap-10">
+          <div>
             <div className="flex flex-wrap items-center gap-3">
               {featured ? (
                 <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-strong">
@@ -123,10 +126,8 @@ function ProjectEntry({
             )}
           </div>
 
-          {project.image && (
-            <div className="lg:w-[42%] lg:shrink-0">
-              <ProjectScreenshot image={project.image} />
-            </div>
+          {project.screenshots && (
+            <ProjectShowcase shots={project.screenshots} />
           )}
         </div>
       </ProjectCard>

@@ -25,8 +25,9 @@ export type ProjectLink = {
 };
 
 /**
- * Optional real screenshot for a project. Left undefined until a genuine local
- * image exists in `public/`; components render nothing when it is absent.
+ * A single real screenshot living in `public/projects/`. `width` / `height` are
+ * the file's true pixel dimensions and are used only to reserve the correct
+ * aspect ratio (no layout shift); the rendered size is set in CSS.
  */
 export type ProjectImage = {
   /** Path under `public/`, e.g. "/projects/returnops.png". */
@@ -34,6 +35,17 @@ export type ProjectImage = {
   alt: string;
   width: number;
   height: number;
+};
+
+/**
+ * Real screenshots for a project. Left undefined until genuine local images
+ * exist in `public/projects/`; components render nothing when it is absent.
+ * `primary` is shown large and readable, `secondary` as a smaller supporting
+ * shot composed beside it.
+ */
+export type ProjectScreenshots = {
+  primary: ProjectImage;
+  secondary?: ProjectImage;
 };
 
 export type Project = {
@@ -44,7 +56,7 @@ export type Project = {
   capabilities?: string[];
   stack: string[];
   links: ProjectLink[];
-  image?: ProjectImage;
+  screenshots?: ProjectScreenshots;
   /** Marks the primary case study. */
   featured?: boolean;
 };
@@ -70,6 +82,20 @@ export const PROJECTS: Project[] = [
       "Tailwind CSS",
     ],
     links: [{ label: "Live demo", href: "https://returnops-five.vercel.app" }],
+    screenshots: {
+      primary: {
+        src: "/projects/returnops.png",
+        alt: "ReturnOps dashboard showing total returns, open and completed counts, average processing time, and a bar chart of returns by workflow status",
+        width: 1227,
+        height: 911,
+      },
+      secondary: {
+        src: "/projects/returnops-returns.png",
+        alt: "ReturnOps returns list with search, status and reason filters above a table of return records",
+        width: 1227,
+        height: 911,
+      },
+    },
     featured: true,
   },
   {
@@ -87,6 +113,20 @@ export const PROJECTS: Project[] = [
       "Tailwind CSS",
     ],
     links: [],
+    screenshots: {
+      primary: {
+        src: "/projects/flowfunds.png",
+        alt: "FlowFunds dashboard showing total income, total expenses and available balance cards above a recent transactions list",
+        width: 1227,
+        height: 911,
+      },
+      secondary: {
+        src: "/projects/flowfunds-transactions.png",
+        alt: "FlowFunds transactions page with an add-transaction form and a searchable, filterable list of transactions",
+        width: 1227,
+        height: 911,
+      },
+    },
   },
 ];
 
