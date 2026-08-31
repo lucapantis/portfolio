@@ -40,7 +40,7 @@ export type Project = {
   name: string;
   tagline: string;
   description: string;
-  /** Short, verified capability statements. Featured project only, for now. */
+  /** Short, verified capability statements. */
   capabilities?: string[];
   stack: string[];
   links: ProjectLink[];
@@ -87,14 +87,6 @@ export const PROJECTS: Project[] = [
       "Tailwind CSS",
     ],
     links: [],
-  },
-  {
-    name: "RBM Steel",
-    tagline: "Commercial WordPress / WooCommerce Website",
-    description:
-      "A commercial WordPress and WooCommerce website built and delivered for a real client, covering the product catalogue, content pages and online store.",
-    stack: ["WordPress", "WooCommerce", "PHP"],
-    links: [{ label: "Live site", href: "https://rbmsteel.ro" }],
   },
 ];
 

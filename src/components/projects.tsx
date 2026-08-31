@@ -28,6 +28,22 @@ function StackTags({
   );
 }
 
+function CapabilityList({ capabilities }: { capabilities: string[] }) {
+  return (
+    <ul className="mt-6 space-y-2">
+      {capabilities.map((capability) => (
+        <li key={capability} className="flex gap-3 text-sm text-zinc-300">
+          <span
+            aria-hidden
+            className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-blue-400"
+          />
+          <span>{capability}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function ProjectButtons({ links }: { links: Project["links"] }) {
   if (links.length === 0) return null;
   return (
@@ -48,20 +64,50 @@ function ProjectButtons({ links }: { links: Project["links"] }) {
   );
 }
 
-function FeaturedProject({ project }: { project: Project }) {
+/**
+ * Shared card for a project. `featured` gets more padding, a larger heading and
+ * a blue accent badge so the primary case study reads as the anchor of the
+ * section; the second project uses the same full-width layout at a slightly
+ * calmer scale so it carries real weight rather than looking like a stub.
+ */
+function ProjectCard({
+  project,
+  featured = false,
+  delay,
+}: {
+  project: Project;
+  featured?: boolean;
+  delay?: number;
+}) {
   return (
-    <Reveal>
-      <article className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 transition duration-200 hover:-translate-y-0.5 hover:border-zinc-700 hover:bg-zinc-900/60 hover:shadow-[0_28px_55px_-30px_rgba(0,0,0,0.75)] sm:p-8 lg:p-10">
+    <Reveal delay={delay}>
+      <article
+        className={`rounded-xl border border-zinc-800 bg-zinc-900/40 transition duration-200 hover:-translate-y-0.5 hover:border-zinc-700 hover:bg-zinc-900/60 ${
+          featured
+            ? "p-6 hover:shadow-[0_28px_55px_-30px_rgba(0,0,0,0.75)] sm:p-8 lg:p-10"
+            : "p-6 hover:shadow-[0_22px_45px_-30px_rgba(0,0,0,0.75)] sm:p-8"
+        }`}
+      >
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
           <div className="lg:flex-1">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-blue-300">
-                Featured project
-              </span>
+              {featured ? (
+                <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-blue-300">
+                  Featured project
+                </span>
+              ) : (
+                <span className="rounded-full border border-zinc-700 bg-zinc-800/60 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-zinc-300">
+                  Full-stack project
+                </span>
+              )}
               <span className="text-xs text-zinc-500">{project.tagline}</span>
             </div>
 
-            <h3 className="mt-4 text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl">
+            <h3
+              className={`mt-4 font-semibold tracking-tight text-zinc-50 ${
+                featured ? "text-2xl sm:text-3xl" : "text-xl sm:text-2xl"
+              }`}
+            >
               {project.name}
             </h3>
 
@@ -70,27 +116,16 @@ function FeaturedProject({ project }: { project: Project }) {
             </p>
 
             {project.capabilities && project.capabilities.length > 0 && (
-              <ul className="mt-6 space-y-2">
-                {project.capabilities.map((capability) => (
-                  <li
-                    key={capability}
-                    className="flex gap-3 text-sm text-zinc-300"
-                  >
-                    <span
-                      aria-hidden
-                      className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-blue-400"
-                    />
-                    <span>{capability}</span>
-                  </li>
-                ))}
-              </ul>
+              <CapabilityList capabilities={project.capabilities} />
             )}
 
             <StackTags stack={project.stack} className="mt-6" />
 
-            <div className="mt-7">
-              <ProjectButtons links={project.links} />
-            </div>
+            {project.links.length > 0 && (
+              <div className="mt-7">
+                <ProjectButtons links={project.links} />
+              </div>
+            )}
           </div>
 
           {project.image && (
@@ -104,59 +139,15 @@ function FeaturedProject({ project }: { project: Project }) {
   );
 }
 
-function SecondaryProject({
-  project,
-  delay,
-}: {
-  project: Project;
-  delay: number;
-}) {
-  return (
-    <Reveal className="h-full" delay={delay}>
-      <article className="flex h-full flex-col rounded-lg border border-zinc-800 bg-zinc-900/40 p-6 transition duration-200 hover:-translate-y-0.5 hover:border-zinc-700 hover:bg-zinc-900/60 hover:shadow-[0_22px_45px_-30px_rgba(0,0,0,0.75)]">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 className="text-base font-semibold text-zinc-100">
-            {project.name}
-          </h3>
-          <span className="text-xs text-zinc-500">{project.tagline}</span>
-        </div>
-
-        <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-          {project.description}
-        </p>
-
-        {project.image && (
-          <ProjectScreenshot image={project.image} className="mt-4" />
-        )}
-
-        <StackTags stack={project.stack} className="mt-4" />
-
-        {project.links.length > 0 && (
-          <div className="mt-5">
-            <ProjectButtons links={project.links} />
-          </div>
-        )}
-      </article>
-    </Reveal>
-  );
-}
-
 export function Projects() {
   return (
     <Section id="projects" eyebrow="Projects" title="Featured projects">
-      {featured && <FeaturedProject project={featured} />}
-
-      {secondary.length > 0 && (
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          {secondary.map((project, index) => (
-            <SecondaryProject
-              key={project.name}
-              project={project}
-              delay={index * 60}
-            />
-          ))}
-        </div>
-      )}
+      <div className="space-y-6">
+        {featured && <ProjectCard project={featured} featured />}
+        {secondary.map((project) => (
+          <ProjectCard key={project.name} project={project} delay={80} />
+        ))}
+      </div>
     </Section>
   );
 }

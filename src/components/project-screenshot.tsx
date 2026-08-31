@@ -5,9 +5,10 @@ import type { ProjectImage } from "@/lib/content";
  * Renders a real project screenshot when one exists in `public/`.
  *
  * There are no screenshots yet, so no project defines `image` and this
- * component is never rendered. It exists so a genuine screenshot can be added
- * later by setting `image` on a project in `content.ts` — nothing else changes.
- * Never used to show a placeholder or a fabricated interface.
+ * component is never rendered. To add one later, drop a real image into
+ * `public/projects/` and set `image` on that project in `content.ts` — the
+ * card picks it up with no other changes. Never used to show a placeholder,
+ * an empty frame or a fabricated interface.
  */
 export function ProjectScreenshot({
   image,
