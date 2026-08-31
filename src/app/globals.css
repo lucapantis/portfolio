@@ -1,12 +1,77 @@
 @import "tailwindcss";
 
+/*
+ * Centralized theme system.
+ *
+ * Every colour used by the UI is a semantic token exposed to Tailwind through
+ * `@theme inline` (so `bg-surface`, `text-muted`, `border-border`, … compile to
+ * `var(--surface)` and friends). The concrete values live on `:root` (dark, the
+ * default for a first-time visitor) and are overridden under
+ * `:root[data-theme="light"]`. Nothing here depends on client state, so the
+ * server and the first client render are identical: `<ThemeToggle>` only sets
+ * `data-theme` on <html> *after* mount.
+ */
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-hairline: var(--hairline);
+  --color-foreground: var(--foreground);
+  --color-heading: var(--heading);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
 }
 
-:root {
+/* Dark theme — the deterministic default. Bare :root needs no attribute. */
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
+
+  --background: #09090b;
+  --surface: #17171a;
+  --surface-muted: #101013;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --hairline: rgba(255, 255, 255, 0.06);
+  --foreground: #d4d4d8;
+  --heading: #fafafa;
+  --muted: #a1a1aa;
+  --faint: #8a8a93;
+  --accent: #60a5fa;
+  --accent-strong: #2563eb;
+
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --hero-glow: rgba(37, 99, 235, 0.14);
+  --card-shadow: rgba(0, 0, 0, 0.75);
+}
+
+/* Light theme — a warm, low-glare companion, not an inversion. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --background: #f8f7f5;
+  --surface: #ffffff;
+  --surface-muted: #f1f0ec;
+  --border: #e5e3dd;
+  --border-strong: #d3cfc7;
+  --hairline: rgba(28, 26, 23, 0.08);
+  --foreground: #3f3f46;
+  --heading: #1c1a17;
+  --muted: #57534e;
+  --faint: #78716c;
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+
+  --grid-line: rgba(28, 26, 23, 0.035);
+  --hero-glow: rgba(37, 99, 235, 0.09);
+  --card-shadow: rgba(28, 26, 23, 0.13);
 }
 
 html {
@@ -16,20 +81,42 @@ html {
 }
 
 body {
-  background-color: #09090b; /* zinc-950 */
-  color: #f4f4f5; /* zinc-100 */
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 ::selection {
-  background-color: rgba(96, 165, 250, 0.28); /* blue-400 */
-  color: #ffffff;
+  background-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: var(--heading);
 }
 
 /* Consistent, visible keyboard focus for every interactive element. */
 :focus-visible {
-  outline: 2px solid #60a5fa; /* blue-400 */
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/*
+ * Theme-switch colour transition.
+ *
+ * The class is added to <html> only on an explicit user toggle (never during
+ * render) and removed ~400ms later, so it colours the swap without making every
+ * later hover feel sluggish. Skipped entirely under reduced motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  :root.theme-transition,
+  :root.theme-transition *,
+  :root.theme-transition *::before,
+  :root.theme-transition *::after {
+    transition:
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      color 0.35s ease,
+      fill 0.35s ease,
+      box-shadow 0.35s ease !important;
+    transition-delay: 0s !important;
+  }
 }
 
 /*
@@ -38,20 +125,87 @@ body {
  * JavaScript the content simply renders visible. The `scripting` media feature
  * is evaluated at parse time, so this needs no class toggled on a root element
  * (which would desync the server-rendered <html> className and break hydration).
- * The <Reveal> component adds [data-revealed] once the section scrolls in.
+ * The <Reveal> component adds [data-revealed] once the section scrolls in, and
+ * an optional per-item delay produces a gentle stagger for related cards.
  */
 @media (scripting: enabled) {
   [data-reveal] {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
     transition:
-      opacity 0.5s ease-out,
-      transform 0.5s ease-out;
+      opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   [data-reveal][data-revealed] {
     opacity: 1;
     transform: none;
+  }
+}
+
+/*
+ * Hero: a very slow ambient drift of the blue highlight. Restricted to precise
+ * pointers (so touch devices stay still) and to users who allow motion.
+ */
+[data-hero-glow] {
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  [data-hero-glow] {
+    animation: hero-glow-drift 24s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes hero-glow-drift {
+  from {
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    transform: translate(-50%, 22px) scale(1.05);
+  }
+}
+
+/* Status dot: a soft outward pulse behind the developer-profile indicator. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-status-dot]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background-color: var(--accent);
+    animation: status-ping 2.8s ease-out infinite;
+  }
+}
+
+@keyframes status-ping {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+/*
+ * Project card spotlight: a faint pointer-following highlight, desktop only.
+ * `--spot-x` / `--spot-y` are written by the card component on pointer move;
+ * they default to the centre so a keyboard-focused card still lights up.
+ */
+.spotlight {
+  background: radial-gradient(
+    16rem circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--accent) 13%, transparent),
+    transparent 72%
+  );
+}
+
+@media (hover: none), (pointer: coarse) {
+  .spotlight {
+    display: none;
   }
 }
 
@@ -63,11 +217,15 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
   [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  [data-status-dot]::after {
+    content: none;
   }
 }

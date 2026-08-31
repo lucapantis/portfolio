@@ -8,7 +8,7 @@ export function About() {
       eyebrow="About"
       title="Building practical full-stack applications"
     >
-      <Reveal className="max-w-2xl space-y-4 text-zinc-400">
+      <Reveal className="max-w-2xl space-y-4 text-muted">
         <p className="leading-relaxed">
           I&rsquo;m a junior full-stack developer focused on building and
           shipping complete web applications &mdash; from database schema and API

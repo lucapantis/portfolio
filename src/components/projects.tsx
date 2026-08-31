@@ -1,6 +1,7 @@
 import { Section } from "@/components/section";
 import { ButtonLink } from "@/components/button-link";
 import { Reveal } from "@/components/reveal";
+import { ProjectCard } from "@/components/project-card";
 import { ProjectScreenshot } from "@/components/project-screenshot";
 import { PROJECTS, type Project } from "@/lib/content";
 
@@ -19,7 +20,7 @@ function StackTags({
       {stack.map((tech) => (
         <li
           key={tech}
-          className="rounded border border-zinc-800 bg-zinc-950 px-2 py-1 font-mono text-[11px] text-zinc-400"
+          className="rounded border border-border bg-surface-muted px-2 py-1 font-mono text-[11px] text-muted transition-colors hover:border-border-strong hover:text-foreground"
         >
           {tech}
         </li>
@@ -32,10 +33,10 @@ function CapabilityList({ capabilities }: { capabilities: string[] }) {
   return (
     <ul className="mt-6 space-y-2">
       {capabilities.map((capability) => (
-        <li key={capability} className="flex gap-3 text-sm text-zinc-300">
+        <li key={capability} className="flex gap-3 text-sm text-foreground">
           <span
             aria-hidden
-            className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-blue-400"
+            className="mt-[0.45rem] h-1 w-1 shrink-0 rounded-full bg-accent"
           />
           <span>{capability}</span>
         </li>
@@ -70,7 +71,7 @@ function ProjectButtons({ links }: { links: Project["links"] }) {
  * section; the second project uses the same full-width layout at a slightly
  * calmer scale so it carries real weight rather than looking like a stub.
  */
-function ProjectCard({
+function ProjectEntry({
   project,
   featured = false,
   delay,
@@ -81,37 +82,31 @@ function ProjectCard({
 }) {
   return (
     <Reveal delay={delay}>
-      <article
-        className={`rounded-xl border border-zinc-800 bg-zinc-900/40 transition duration-200 hover:-translate-y-0.5 hover:border-zinc-700 hover:bg-zinc-900/60 ${
-          featured
-            ? "p-6 hover:shadow-[0_28px_55px_-30px_rgba(0,0,0,0.75)] sm:p-8 lg:p-10"
-            : "p-6 hover:shadow-[0_22px_45px_-30px_rgba(0,0,0,0.75)] sm:p-8"
-        }`}
-      >
+      <ProjectCard featured={featured}>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-12">
           <div className="lg:flex-1">
             <div className="flex flex-wrap items-center gap-3">
               {featured ? (
-                <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-blue-300">
+                <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-strong">
                   Featured project
                 </span>
               ) : (
-                <span className="rounded-full border border-zinc-700 bg-zinc-800/60 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-zinc-300">
+                <span className="rounded-full border border-border-strong bg-surface-muted px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-foreground">
                   Full-stack project
                 </span>
               )}
-              <span className="text-xs text-zinc-500">{project.tagline}</span>
+              <span className="text-xs text-faint">{project.tagline}</span>
             </div>
 
             <h3
-              className={`mt-4 font-semibold tracking-tight text-zinc-50 ${
+              className={`mt-4 font-semibold tracking-tight text-heading ${
                 featured ? "text-2xl sm:text-3xl" : "text-xl sm:text-2xl"
               }`}
             >
               {project.name}
             </h3>
 
-            <p className="mt-4 max-w-2xl leading-relaxed text-zinc-400">
+            <p className="mt-4 max-w-2xl leading-relaxed text-muted">
               {project.description}
             </p>
 
@@ -134,7 +129,7 @@ function ProjectCard({
             </div>
           )}
         </div>
-      </article>
+      </ProjectCard>
     </Reveal>
   );
 }
@@ -143,9 +138,13 @@ export function Projects() {
   return (
     <Section id="projects" eyebrow="Projects" title="Featured projects">
       <div className="space-y-6">
-        {featured && <ProjectCard project={featured} featured />}
-        {secondary.map((project) => (
-          <ProjectCard key={project.name} project={project} delay={80} />
+        {featured && <ProjectEntry project={featured} featured />}
+        {secondary.map((project, index) => (
+          <ProjectEntry
+            key={project.name}
+            project={project}
+            delay={80 + index * 80}
+          />
         ))}
       </div>
     </Section>

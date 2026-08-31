@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { ScrollProgress } from "@/components/scroll-progress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,13 +39,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-zinc-950 font-sans text-zinc-100">
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <a
           href="#main"
-          className="sr-only rounded-md bg-zinc-900 px-4 py-2 text-sm text-zinc-100 focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60]"
+          className="sr-only rounded-md bg-surface px-4 py-2 text-sm text-heading focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[80]"
         >
           Skip to content
         </a>
+        <ScrollProgress />
         <SiteHeader />
         <main id="main" className="flex-1">
           {children}

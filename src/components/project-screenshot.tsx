@@ -19,7 +19,7 @@ export function ProjectScreenshot({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 ${className}`.trim()}
+      className={`overflow-hidden rounded-lg border border-border bg-surface-muted ${className}`.trim()}
     >
       <Image
         src={image.src}

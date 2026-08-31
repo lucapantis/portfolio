@@ -5,9 +5,9 @@ const base =
 
 const variants = {
   primary:
-    "bg-blue-600 text-white hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-600/20",
+    "bg-accent-strong text-white hover:bg-accent hover:shadow-lg hover:shadow-accent-strong/25",
   secondary:
-    "border border-zinc-700 text-zinc-200 hover:border-zinc-500 hover:bg-zinc-900",
+    "border border-border-strong text-foreground hover:border-accent hover:bg-surface hover:text-heading",
 } as const;
 
 type ButtonLinkProps = ComponentPropsWithoutRef<"a"> & {

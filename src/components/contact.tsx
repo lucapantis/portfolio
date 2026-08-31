@@ -7,7 +7,7 @@ export function Contact() {
   return (
     <Section id="contact" eyebrow="Contact" title="Get in touch">
       <Reveal className="max-w-2xl">
-        <p className="leading-relaxed text-zinc-400">
+        <p className="leading-relaxed text-muted">
           I&rsquo;m open to junior full-stack roles and freelance work. GitHub is
           the best place to see what I&rsquo;m building and to reach me.
         </p>
