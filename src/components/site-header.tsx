@@ -1,35 +1,109 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NAV_LINKS } from "@/lib/content";
+
+const SECTION_IDS = NAV_LINKS.map((link) => link.href.replace("#", ""));
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  // Highlight the nav link for the section currently in view.
+  useEffect(() => {
+    const sections = SECTION_IDS.map((id) =>
+      document.getElementById(id),
+    ).filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: [0, 0.5, 1] },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    const onScroll = () => {
+      if (window.scrollY < 240) setActiveId(null);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  // Close the mobile menu on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-zinc-950/75 backdrop-blur-md">
       <nav
         aria-label="Primary"
-        className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6"
+        className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6"
       >
         <a
           href="#main"
-          className="font-mono text-sm font-semibold tracking-tight text-zinc-100 transition-colors hover:text-blue-400"
+          className="flex items-center gap-2.5 text-zinc-100 transition-colors hover:text-white"
         >
-          Luca Pantis
+          <span
+            aria-hidden
+            className="grid h-8 w-8 place-items-center rounded-md border border-zinc-700 bg-zinc-900 font-mono text-xs font-semibold tracking-tight text-blue-400"
+          >
+            LP
+          </span>
+          <span className="font-mono text-sm font-semibold tracking-tight">
+            Luca Pantis
+          </span>
         </a>
 
-        <ul className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-sm text-zinc-400 transition-colors hover:text-zinc-100"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+        <ul className="hidden items-center gap-7 md:flex">
+          {NAV_LINKS.map((link) => {
+            const id = link.href.replace("#", "");
+            const isActive = activeId === id;
+
+            if (link.href === "#contact") {
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    aria-current={isActive ? "true" : undefined}
+                    className="rounded-md border border-zinc-700 px-3 py-1.5 text-sm text-zinc-200 transition-colors hover:border-zinc-500 hover:bg-zinc-900 hover:text-zinc-100"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            }
+
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  aria-current={isActive ? "true" : undefined}
+                  data-active={isActive}
+                  className="relative text-sm text-zinc-400 transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-blue-400 after:transition-transform after:duration-200 hover:text-zinc-100 data-[active=true]:text-zinc-100 data-[active=true]:after:scale-x-100"
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
         <button
@@ -64,20 +138,25 @@ export function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="border-t border-zinc-800/80 bg-zinc-950 md:hidden"
+          className="border-t border-white/[0.06] bg-zinc-950 md:hidden"
         >
-          <ul className="mx-auto flex max-w-5xl flex-col px-6 py-2">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block py-3 text-sm text-zinc-300 transition-colors hover:text-blue-400"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
+          <ul className="mx-auto flex max-w-6xl flex-col px-6 py-2">
+            {NAV_LINKS.map((link) => {
+              const id = link.href.replace("#", "");
+              const isActive = activeId === id;
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    aria-current={isActive ? "true" : undefined}
+                    onClick={() => setOpen(false)}
+                    className="block py-3 text-sm text-zinc-300 transition-colors hover:text-blue-400 aria-[current]:text-zinc-100"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

@@ -32,6 +32,29 @@ body {
   border-radius: 2px;
 }
 
+/*
+ * Scroll reveal (progressive enhancement).
+ * These pre-reveal styles only apply when scripting is available, so without
+ * JavaScript the content simply renders visible. The `scripting` media feature
+ * is evaluated at parse time, so this needs no class toggled on a root element
+ * (which would desync the server-rendered <html> className and break hydration).
+ * The <Reveal> component adds [data-revealed] once the section scrolls in.
+ */
+@media (scripting: enabled) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.5s ease-out,
+      transform 0.5s ease-out;
+  }
+
+  [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -41,5 +64,10 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

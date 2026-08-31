@@ -1,4 +1,5 @@
 import { Section } from "@/components/section";
+import { Reveal } from "@/components/reveal";
 
 export function About() {
   return (
@@ -7,7 +8,7 @@ export function About() {
       eyebrow="About"
       title="Building practical full-stack applications"
     >
-      <div className="max-w-2xl space-y-4 text-zinc-400">
+      <Reveal className="max-w-2xl space-y-4 text-zinc-400">
         <p className="leading-relaxed">
           I&rsquo;m a junior full-stack developer focused on building and
           shipping complete web applications &mdash; from database schema and API
@@ -23,7 +24,7 @@ export function About() {
           I work day to day with Git and deploy on Vercel, and I&rsquo;m
           comfortable owning a feature end to end.
         </p>
-      </div>
+      </Reveal>
     </Section>
   );
 }
