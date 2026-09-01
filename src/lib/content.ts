@@ -9,8 +9,7 @@ export const SITE_URL = "https://luca-pantis-portfolio.vercel.app";
 // Verified personal contact links, defined once and shared by the contact
 // section, the site footer and the site metadata.
 export const EMAIL = "lucapantis@gmail.com";
-export const LINKEDIN_URL =
-  "https://www.linkedin.com/in/luca-pantis-436a9b36a/";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/luca-pantis/";
 export const GITHUB_URL = "https://github.com/lucapantis";
 
 // Verified per-project links. Kept here so the homepage cards and the ReturnOps
