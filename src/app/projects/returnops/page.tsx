@@ -11,11 +11,11 @@ import {
 } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "ReturnOps — Returns Management Platform · Case study | Luca Pantis",
+  title: "ReturnOps — Returns Management Platform (case study)",
   description:
     "A case study of ReturnOps: an internal returns-management tool with a fixed inspection workflow, URL-driven reporting, CSV import/export, default-deny role-based access and a database-enforced audit trail — built with Next.js, TypeScript, PostgreSQL and Prisma.",
   openGraph: {
-    title: "ReturnOps — Returns Management Platform · Case study",
+    title: "ReturnOps — Returns Management Platform (case study)",
     description:
       "How ReturnOps organises returns handling for a small operations team, and the engineering behind it.",
     type: "article",

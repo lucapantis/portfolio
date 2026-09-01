@@ -15,16 +15,31 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Base URL for resolving Open Graph / Twitter image URLs to absolute form.
+// Uses the Vercel-provided deployment URL in production; falls back to the local
+// dev origin otherwise. No production domain is hard-coded.
+const metadataBase = new URL(
+  process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000",
+);
+
 export const metadata: Metadata = {
-  title: "Luca Pantis — Junior Full-Stack Developer",
+  metadataBase,
+  title: {
+    default: "Luca Pantis — Junior Full-Stack Developer",
+    template: "%s — Luca Pantis",
+  },
   description:
-    "Luca Pantis is a junior full-stack developer building practical web applications with React, Next.js, TypeScript, Node.js and PostgreSQL.",
+    "Portfolio of Luca Pantis, a junior full-stack developer building practical web applications with React, Next.js, TypeScript, Node.js and PostgreSQL. Featured work: ReturnOps and FlowFunds.",
+  applicationName: "Luca Pantis — Portfolio",
   authors: [{ name: "Luca Pantis" }],
   creator: "Luca Pantis",
   openGraph: {
     title: "Luca Pantis — Junior Full-Stack Developer",
     description:
-      "Junior full-stack developer building practical web applications with React, Next.js, TypeScript and Node.js.",
+      "Junior full-stack developer building practical web applications with React, Next.js, TypeScript, Node.js and PostgreSQL.",
+    siteName: "Luca Pantis — Portfolio",
     type: "website",
   },
 };
