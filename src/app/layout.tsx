@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { SITE_URL } from "@/lib/content";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,17 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Base URL for resolving Open Graph / Twitter image URLs to absolute form.
-// Uses the Vercel-provided deployment URL in production; falls back to the local
-// dev origin otherwise. No production domain is hard-coded.
-const metadataBase = new URL(
-  process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000",
-);
-
 export const metadata: Metadata = {
-  metadataBase,
+  // Absolute base for every URL-based metadata field (Open Graph / Twitter
+  // images, canonical links). Points at the verified production deployment.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Luca Pantis — Junior Full-Stack Developer",
     template: "%s — Luca Pantis",
@@ -39,8 +33,14 @@ export const metadata: Metadata = {
     title: "Luca Pantis — Junior Full-Stack Developer",
     description:
       "Junior full-stack developer building practical web applications with React, Next.js, TypeScript, Node.js and PostgreSQL.",
+    url: "/",
     siteName: "Luca Pantis — Portfolio",
     type: "website",
+  },
+  twitter: {
+    // Title, description and image alt fall back to the per-route Open Graph
+    // values, so only the card type needs to be set site-wide.
+    card: "summary_large_image",
   },
 };
 
