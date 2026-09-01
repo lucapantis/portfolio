@@ -3,6 +3,13 @@
 
 export const GITHUB_URL = "https://github.com/lucapantis";
 
+// Verified per-project links. Kept here so the homepage cards and the ReturnOps
+// case study page cite exactly the same URLs.
+export const RETURNOPS_LIVE_URL = "https://returnops-five.vercel.app";
+export const RETURNOPS_REPO_URL = "https://github.com/lucapantis/returnops";
+export const FLOWFUNDS_LIVE_URL = "https://flowfunds-two.vercel.app";
+export const FLOWFUNDS_REPO_URL = "https://github.com/lucapantis/flowfunds";
+
 export const NAV_LINKS = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
@@ -55,7 +62,10 @@ export type Project = {
   /** Short, verified capability statements. */
   capabilities?: string[];
   stack: string[];
+  /** External links (live demo, repository). Rendered as new-tab actions. */
   links: ProjectLink[];
+  /** Internal route to a dedicated case study page, if one exists. */
+  caseStudyHref?: string;
   screenshots?: ProjectScreenshots;
   /** Marks the primary case study. */
   featured?: boolean;
@@ -66,22 +76,28 @@ export const PROJECTS: Project[] = [
     name: "ReturnOps",
     tagline: "Returns Management Platform",
     description:
-      "A full-stack platform that addresses returns-management workflows end to end — from the customer's return request through to the team's resolution of each case.",
+      "An internal operations tool for managing product returns: logging each return, moving it through a fixed inspection-and-resolution workflow, and reporting on return volume and reasons — with role-based access control and an append-only audit trail.",
     capabilities: [
-      "Guided flow for customers to submit return requests",
-      "Internal dashboard for the team to review and approve returns",
-      "Case tracking from submission through to resolution",
+      "Structured return records moving through a fixed five-stage inspection-and-resolution workflow",
+      "Server-rendered dashboard and returns list with URL-based search, filters and CSV export",
+      "CSV import wizard with row-level validation and a single-transaction commit",
+      "Default-deny role-based access control with a database-enforced, append-only audit trail",
     ],
     stack: [
       "Next.js",
+      "React",
       "TypeScript",
-      "Node.js",
-      "Express",
       "PostgreSQL",
       "Prisma",
+      "Zod",
+      "Auth.js",
       "Tailwind CSS",
     ],
-    links: [{ label: "Live demo", href: "https://returnops-five.vercel.app" }],
+    links: [
+      { label: "Live demo", href: RETURNOPS_LIVE_URL },
+      { label: "GitHub", href: RETURNOPS_REPO_URL },
+    ],
+    caseStudyHref: "/projects/returnops",
     screenshots: {
       primary: {
         src: "/projects/returnops.png",
@@ -112,7 +128,10 @@ export const PROJECTS: Project[] = [
       "Prisma",
       "Tailwind CSS",
     ],
-    links: [],
+    links: [
+      { label: "Live demo", href: FLOWFUNDS_LIVE_URL },
+      { label: "GitHub", href: FLOWFUNDS_REPO_URL },
+    ],
     screenshots: {
       primary: {
         src: "/projects/flowfunds.png",

@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { Section } from "@/components/section";
-import { ButtonLink } from "@/components/button-link";
+import { ButtonLink, buttonClasses } from "@/components/button-link";
 import { Reveal } from "@/components/reveal";
 import { ProjectCard } from "@/components/project-card";
 import { ProjectShowcase } from "@/components/project-showcase";
@@ -45,10 +46,23 @@ function CapabilityList({ capabilities }: { capabilities: string[] }) {
   );
 }
 
-function ProjectButtons({ links }: { links: Project["links"] }) {
-  if (links.length === 0) return null;
+function ProjectActions({ project }: { project: Project }) {
+  const { caseStudyHref, links } = project;
+  if (!caseStudyHref && links.length === 0) return null;
+
   return (
     <div className="flex flex-wrap gap-3">
+      {caseStudyHref && (
+        <Link
+          href={caseStudyHref}
+          className={buttonClasses({
+            variant: "primary",
+            className: "px-4 py-2 text-xs",
+          })}
+        >
+          View case study <span aria-hidden>&rarr;</span>
+        </Link>
+      )}
       {links.map((link) => (
         <ButtonLink
           key={link.href}
@@ -58,7 +72,7 @@ function ProjectButtons({ links }: { links: Project["links"] }) {
           variant="secondary"
           className="px-4 py-2 text-xs"
         >
-          {link.label} &#8599;
+          {link.label} <span aria-hidden>&#8599;</span>
         </ButtonLink>
       ))}
     </div>
@@ -119,9 +133,9 @@ function ProjectEntry({
 
             <StackTags stack={project.stack} className="mt-6" />
 
-            {project.links.length > 0 && (
+            {(project.caseStudyHref || project.links.length > 0) && (
               <div className="mt-7">
-                <ProjectButtons links={project.links} />
+                <ProjectActions project={project} />
               </div>
             )}
           </div>

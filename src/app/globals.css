@@ -90,6 +90,17 @@ body {
   color: var(--heading);
 }
 
+/* Inline code in long-form copy (e.g. the case study). */
+code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background-color: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
 /* Consistent, visible keyboard focus for every interactive element. */
 :focus-visible {
   outline: 2px solid var(--accent);

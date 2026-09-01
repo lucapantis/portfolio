@@ -10,8 +10,22 @@ const variants = {
     "border border-border-strong text-foreground hover:border-accent hover:bg-surface hover:text-heading",
 } as const;
 
+type Variant = keyof typeof variants;
+
+/**
+ * Shared button styling. Use for a plain `<a>` (via `ButtonLink`), a `next/link`
+ * `<Link>`, or a real `<button>`, so every call-to-action across the site — the
+ * homepage and the case study page — reads the same.
+ */
+export function buttonClasses({
+  variant = "primary",
+  className = "",
+}: { variant?: Variant; className?: string } = {}) {
+  return `${base} ${variants[variant]} ${className}`.trim();
+}
+
 type ButtonLinkProps = ComponentPropsWithoutRef<"a"> & {
-  variant?: keyof typeof variants;
+  variant?: Variant;
 };
 
 export function ButtonLink({
@@ -19,7 +33,5 @@ export function ButtonLink({
   className = "",
   ...props
 }: ButtonLinkProps) {
-  return (
-    <a className={`${base} ${variants[variant]} ${className}`.trim()} {...props} />
-  );
+  return <a className={buttonClasses({ variant, className })} {...props} />;
 }

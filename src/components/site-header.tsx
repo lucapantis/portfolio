@@ -1,19 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { NAV_LINKS } from "@/lib/content";
 import { useTheme } from "@/lib/use-theme";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const SECTION_IDS = NAV_LINKS.map((link) => link.href.replace("#", ""));
 
+/**
+ * Primary header, shared by every route through the root layout.
+ *
+ * On the homepage the section links are in-page anchors and the active one is
+ * tracked as you scroll. On any other route (e.g. the ReturnOps case study)
+ * the same links point back at `/#section` and render as `next/link`, so the
+ * return trip is a client-side transition that keeps the current theme with no
+ * reload or flash.
+ */
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const { theme, toggle } = useTheme();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
-  // Highlight the nav link for the section currently in view.
+  // Highlight the nav link for the section currently in view (homepage only).
+  // Off the homepage there are no sections to observe; `activeId` is ignored
+  // anyway because every read is gated behind `isHome`.
   useEffect(() => {
+    if (!isHome) return;
+
     const sections = SECTION_IDS.map((id) =>
       document.getElementById(id),
     ).filter((el): el is HTMLElement => el !== null);
@@ -42,7 +59,7 @@ export function SiteHeader() {
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [isHome]);
 
   // Close the mobile menu on Escape.
   useEffect(() => {
@@ -54,56 +71,93 @@ export function SiteHeader() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // `#about` while on the homepage; `/#about` (a real navigation) from elsewhere.
+  const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
+
+  const homeMark = (
+    <span
+      aria-hidden
+      className="grid h-8 w-8 place-items-center rounded-md border border-border-strong bg-surface font-mono text-xs font-semibold tracking-tight text-accent"
+    >
+      LP
+    </span>
+  );
+  const homeLabel = (
+    <span className="font-mono text-sm font-semibold tracking-tight">
+      Luca Pantis
+    </span>
+  );
+  const homeLinkClass =
+    "flex items-center gap-2.5 text-heading transition-colors hover:text-accent";
+
   return (
     <header className="sticky top-0 z-50 border-b border-hairline bg-background/75 backdrop-blur-md">
       <nav
         aria-label="Primary"
         className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6"
       >
-        <a
-          href="#main"
-          className="flex items-center gap-2.5 text-heading transition-colors hover:text-accent"
-        >
-          <span
-            aria-hidden
-            className="grid h-8 w-8 place-items-center rounded-md border border-border-strong bg-surface font-mono text-xs font-semibold tracking-tight text-accent"
-          >
-            LP
-          </span>
-          <span className="font-mono text-sm font-semibold tracking-tight">
-            Luca Pantis
-          </span>
-        </a>
+        {isHome ? (
+          <a href="#main" className={homeLinkClass}>
+            {homeMark}
+            {homeLabel}
+          </a>
+        ) : (
+          <Link href="/" className={homeLinkClass}>
+            {homeMark}
+            {homeLabel}
+          </Link>
+        )}
 
         <ul className="hidden items-center gap-7 md:flex">
           {NAV_LINKS.map((link) => {
             const id = link.href.replace("#", "");
-            const isActive = activeId === id;
+            const isActive = isHome && activeId === id;
+            const href = sectionHref(link.href);
+            const linkProps = {
+              "aria-current": isActive ? ("true" as const) : undefined,
+            };
 
             if (link.href === "#contact") {
+              const className =
+                "rounded-md border border-border-strong px-3 py-1.5 text-sm text-foreground transition-colors hover:border-accent hover:bg-surface hover:text-heading";
               return (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    aria-current={isActive ? "true" : undefined}
-                    className="rounded-md border border-border-strong px-3 py-1.5 text-sm text-foreground transition-colors hover:border-accent hover:bg-surface hover:text-heading"
-                  >
-                    {link.label}
-                  </a>
+                  {isHome ? (
+                    <a href={href} className={className} {...linkProps}>
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={href} className={className} {...linkProps}>
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               );
             }
 
+            const className =
+              "relative text-sm text-muted transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-accent after:transition-transform after:duration-200 hover:text-heading data-[active=true]:text-heading data-[active=true]:after:scale-x-100";
             return (
               <li key={link.href}>
-                <a
-                  href={link.href}
-                  aria-current={isActive ? "true" : undefined}
-                  data-active={isActive}
-                  className="relative text-sm text-muted transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-accent after:transition-transform after:duration-200 hover:text-heading data-[active=true]:text-heading data-[active=true]:after:scale-x-100"
-                >
-                  {link.label}
-                </a>
+                {isHome ? (
+                  <a
+                    href={href}
+                    data-active={isActive}
+                    className={className}
+                    {...linkProps}
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    href={href}
+                    data-active={isActive}
+                    className={className}
+                    {...linkProps}
+                  >
+                    {link.label}
+                  </Link>
+                )}
               </li>
             );
           })}
@@ -152,17 +206,32 @@ export function SiteHeader() {
           <ul className="mx-auto flex max-w-6xl flex-col px-6 py-2">
             {NAV_LINKS.map((link) => {
               const id = link.href.replace("#", "");
-              const isActive = activeId === id;
+              const isActive = isHome && activeId === id;
+              const href = sectionHref(link.href);
+              const className =
+                "block py-3 text-sm text-foreground transition-colors hover:text-accent aria-[current]:text-heading";
+              const close = () => setOpen(false);
               return (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    aria-current={isActive ? "true" : undefined}
-                    onClick={() => setOpen(false)}
-                    className="block py-3 text-sm text-foreground transition-colors hover:text-accent aria-[current]:text-heading"
-                  >
-                    {link.label}
-                  </a>
+                  {isHome ? (
+                    <a
+                      href={href}
+                      aria-current={isActive ? "true" : undefined}
+                      onClick={close}
+                      className={className}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={href}
+                      aria-current={isActive ? "true" : undefined}
+                      onClick={close}
+                      className={className}
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               );
             })}
