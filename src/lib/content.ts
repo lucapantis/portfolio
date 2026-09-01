@@ -1,6 +1,11 @@
 // Structured content for the portfolio. Keep copy and links here so sections
 // stay presentational and repeated items are defined once.
 
+// Verified production origin. This is the canonical public URL of the deployed
+// portfolio; it backs `metadataBase`, the canonical links, the sitemap and
+// robots. No trailing slash.
+export const SITE_URL = "https://luca-pantis-portfolio.vercel.app";
+
 // Verified personal contact links, defined once and shared by the contact
 // section, the site footer and the site metadata.
 export const EMAIL = "lucapantis@gmail.com";

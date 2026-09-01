@@ -14,10 +14,12 @@ export const metadata: Metadata = {
   title: "ReturnOps — Returns Management Platform (case study)",
   description:
     "A case study of ReturnOps: an internal returns-management tool with a fixed inspection workflow, URL-driven reporting, CSV import/export, default-deny role-based access and a database-enforced audit trail — built with Next.js, TypeScript, PostgreSQL and Prisma.",
+  alternates: { canonical: "/projects/returnops" },
   openGraph: {
     title: "ReturnOps — Returns Management Platform (case study)",
     description:
       "How ReturnOps organises returns handling for a small operations team, and the engineering behind it.",
+    url: "/projects/returnops",
     type: "article",
   },
 };

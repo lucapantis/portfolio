@@ -4,6 +4,8 @@ Personal portfolio for **Luca Pantis**, a junior full-stack developer. It is a
 small, fast marketing-style site: a single scrolling homepage plus one in-depth
 project case study, built with the Next.js App Router and deployed on Vercel.
 
+**Live demo:** https://luca-pantis-portfolio.vercel.app
+
 ## Sections
 
 The homepage (`/`) is composed of:
@@ -54,7 +56,7 @@ Project copy, links and screenshot metadata live in one place:
 - **Tailwind CSS 4** (`@tailwindcss/postcss`)
 - **ESLint 9** with `eslint-config-next`
 - `next/font` (Geist / Geist Mono), `next/image` for screenshots
-- `next/og` for the build-time Open Graph image; a repository-native SVG app icon
+- `next/og` for the build-time Open Graph / Twitter card image; a repository-native SVG app icon
 
 ## Theme and accessibility
 
@@ -96,5 +98,8 @@ npm run build    # production build + TypeScript type-check
 
 ## Deployment
 
-Deployed to **Vercel**. The production build is fully static; the app icon and
-Open Graph image are generated at build time.
+Deployed to **Vercel** at https://luca-pantis-portfolio.vercel.app. The
+production build is fully static; the app icon and Open Graph image are
+generated at build time. `metadataBase`, the canonical URLs, `robots.txt` and
+`sitemap.xml` are all derived from that origin (`SITE_URL` in
+[`src/lib/content.ts`](src/lib/content.ts)).
